@@ -1,4 +1,4 @@
-name: PunishAlertForSpigot
+name: PunishManager
 version: '${project.version}'
 author: Shizoukia
 main: catmoe.shizoukia.punishalertforspigot.PunishAlertForSpigot
