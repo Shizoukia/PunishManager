@@ -51,8 +51,13 @@ public final class PunishAlert extends JavaPlugin implements CommandExecutor {
         super.onLoad();
     }
 
-    // 翻译自:
-    // https://github.com/CatMoe/MoeFilter/blob/stray/bungee/src/main/java/catmoe/fallencrystal/moefilter/util/message/v2/MessageUtil.kt#L89-L94
+
+    /*
+    翻译自:
+    https://github.com/CatMoe/MoeFilter/blob/stray/bungee/src/main/java/catmoe/fallencrystal/moefilter/util/message/v2/MessageUtil.kt#L89-L94
+
+    循环调用append后面的args直到一直到末尾.
+     */
     public static StringBuilder argsBuilder(int startIndex, String[] args) {
         StringBuilder message = new StringBuilder();
         if (args != null) {
@@ -68,7 +73,40 @@ public final class PunishAlert extends JavaPlugin implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+
+        // 检查玩家是否拥有特定权限
+        // *: 还算可以的实践 但实际上在plugin.yml中就可以指定插件权限 但也请考虑if (!sender.hasPermission("permission")) { return true } (已修改)
+        // 在布尔值前面加感叹号可以反转布尔值 (颠倒黑白? 类似于true变成false false变成true之类的 *魔法*
+        if (!sender.hasPermission("punishalert")) {
+            sender.sendMessage(colorize(unknown));
+            return true;
+        }
+
+        // 对于不需要重新赋值的对象 建议使用final关键字来声明对象不可被二次修改.
+        final Player targetPlayer;
         /*
+        关于 try-catch语句:
+        try-catch是用来捕获指定Throwable对象的 (例如Exception, Error, etc.)
+        try { runnable } catch (Class obj) { runnable }
+        例如需要抓住Exception 则为 catch (Exception e) { }
+        e则含有Exception本身带有的信息
+
+        当然.. 不建议直接catch住所有的Exception 这可能会导致一些潜在的副作用.
+        优先catch已经考虑到的特定问题.
+
+        为了养成良好的编程语法习惯, 当不需要Exception本身的信息时, 应当命名为 "ignore" 或 "safeIgnore" 等字样
+        */
+        try {
+            targetPlayer = Bukkit.getPlayer(args[0]);
+            // 是的, 我们可以通过 throw + 方法插入Throwable对象来抛出某个异常
+            // 虽然无论如何我们抛出的NPE都会被下面的catch块处理
+            if (targetPlayer == null) { throw new NullPointerException(); }
+        } catch (IndexOutOfBoundsException | NullPointerException ignore) {
+            sender.sendMessage(colorize("&cPlayer not found or not online."));
+            return true;
+        }
+
+                /*
         之前不是有笨蛋想知道switch是什么吗 差不多就是这样了, 当然这里没有忽略大小写的概念 所以选择将输入的字符串转换成小写.
 
         从Java7开始 switch可以case字符串了.
@@ -88,38 +126,6 @@ public final class PunishAlert extends JavaPlugin implements CommandExecutor {
 
         但 实际上也不要指望switch能对于这种if else能有多复杂的判断或者拥有多个rule.
          */
-
-        // 检查玩家是否拥有特定权限
-        // *: 还算可以的实践 但实际上在plugin.yml中就可以指定插件权限 但也请考虑if (!sender.hasPermission("permission")) { return true } (已修改)
-        // 在布尔值前面加感叹号可以反转布尔值 (颠倒黑白? 类似于true变成false false变成true之类的 *魔法*
-        if (!sender.hasPermission("punishalert")) {
-            sender.sendMessage(colorize(unknown));
-            return true;
-        }
-
-        // 对于不需要重新赋值的对象 建议使用final关键字来声明对象不可被二次修改.
-        final Player targetPlayer;
-                    /*
-                    关于 try-catch语句:
-                    try-catch是用来捕获指定Throwable对象的 (例如Exception, Error, etc.)
-                    try { runnable } catch (Class obj) { runnable }
-                    例如需要抓住Exception 则为 catch (Exception e) { }
-                    e则含有Exception本身带有的信息
-
-                    当然.. 不建议直接catch住所有的Exception 这可能会导致一些潜在的副作用.
-                    优先catch已经考虑到的特定问题.
-
-                    为了养成良好的编程语法习惯, 当不需要Exception本身的信息时, 应当命名为 "ignore" 或 "safeIgnore" 等字样
-                     */
-        try {
-            targetPlayer = Bukkit.getPlayer(args[0]);
-            // 是的, 我们可以通过 throw + 方法插入Throwable对象来抛出某个异常
-            // 虽然无论如何我们抛出的NPE都会被下面的catch块处理
-            if (targetPlayer == null) { throw new NullPointerException(); }
-        } catch (IndexOutOfBoundsException | NullPointerException ignore) {
-            sender.sendMessage(colorize("&cPlayer not found or not online."));
-            return true;
-        }
         switch (command.getName().toLowerCase()) {
             case "punishalert":
                 if (args.length != 1) {
