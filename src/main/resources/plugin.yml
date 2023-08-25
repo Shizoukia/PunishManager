@@ -1,7 +1,7 @@
 name: PunishManager
 version: '${project.version}'
 author: Shizoukia
-main: catmoe.shizoukia.punishalertforspigot.PunishAlertForSpigot
+main: catmoe.shizoukia.punishalertforspigot.PunishAlert
 commands:
   punishalert:
     description: e
