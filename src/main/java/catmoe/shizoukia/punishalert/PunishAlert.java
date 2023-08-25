@@ -60,9 +60,14 @@ public final class PunishAlert extends JavaPlugin implements CommandExecutor {
      */
     public static StringBuilder argsBuilder(int startIndex, String[] args) {
         StringBuilder message = new StringBuilder();
-        if (args != null) {
+        if (args != null && args.length -2 >= startIndex) {
+            // for循环
+            // 从startIndex的index开始 以args长度减1为结尾 如果继续执行 则添加i的计数 直到不再小于素组长度-1为止
+            // 当然也有更简单的for循环 例如 for (类型 形参 : 数组/List/Collection/Queue, etc) { runnable } 故不在此处展示
             for (int i = startIndex; i < args.length - 1; i++) { message.append(args[i]).append(" "); }
         }
+        // 对于args的最后一个元素, 由于for循环里通常结尾会添加空格 所以使用单独的办法来append
+        // 这个总的来说就是将最后一位arg 不要空格自己append到上面 (虽然可能有点翻译错误)
         message.append(args != null ? args[args.length - 1] : message);
         return message;
     }
