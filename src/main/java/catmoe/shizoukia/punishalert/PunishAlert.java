@@ -50,7 +50,7 @@ public final class PunishAlert extends JavaPlugin implements CommandExecutor {
 
             case "wipealert":
                 if (args.length != 2) {
-                    sender.sendMessage("§cUsage: /wipealert <player> <reason>");
+                    sender.sendMessage(colorize("&cUsage: /wipealert <player> <reason>"));
                     return true;
                 }
                 // 检查玩家是否拥有特定权限
@@ -61,7 +61,7 @@ public final class PunishAlert extends JavaPlugin implements CommandExecutor {
                         targetPlayer = Bukkit.getPlayer(args[0]);
                         if (targetPlayer == null) { throw new NullPointerException(); }
                     } catch (IndexOutOfBoundsException | NullPointerException ignore) {
-                        sender.sendMessage("Player not found or not online.");
+                        sender.sendMessage(colorize("&cPlayer not found or not online."));
                         return true;
                     }
                     final String reason;
@@ -69,13 +69,13 @@ public final class PunishAlert extends JavaPlugin implements CommandExecutor {
                         reason = args[1];
                         if (reason == null || reason.isEmpty()) { throw new NullPointerException(); }
                     } catch (IndexOutOfBoundsException | NullPointerException e) {
-                        sender.sendMessage("Please Enter Reason");
+                        sender.sendMessage(colorize("Please select a reason"));
                         return true;
                     }
                     final String c = "wipe [player] [reason]"
                             .replace("[player]", targetPlayer.getName())
                             .replace("[reason]", reason);
-                    final String wipeWarn = "\n§f§l» §c§l您的账户部分游戏数据已被我们重置\n"
+                    final String wipeWarn = "\n&f&l» &c&l您的账户部分游戏数据已被我们重置\n"
                             + "&f&l» &6&l原因: &f&l[reason]\n".replace("[reason]", reason)
                             + "&f&l» §b§l请遵守我们的游戏规则 不要使用违规增益\n&f&l» "
                             + "详见: &ehttps://www.miaomoe.net/rules \n&f&l   ";
@@ -93,6 +93,6 @@ public final class PunishAlert extends JavaPlugin implements CommandExecutor {
     @Override
     public void onDisable() {
         // Plugin shutdown logic
-        getLogger().info("[PunishAlert] Disabled! Version" + " " + getDescription().getVersion() + " " + "By Shizoukia");
+        getLogger().info("[PunishAlert] Disabled! Version " + getDescription().getVersion() + " By Shizoukia");
     }
 }
